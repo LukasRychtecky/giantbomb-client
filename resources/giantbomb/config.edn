@@ -1,0 +1,15 @@
+{:duct.profile/base
+ {:duct.core/project-ns giantbomb
+
+  :duct.router/cascading
+  [#ig/ref [:giantbomb.handler/example]]
+
+  :giantbomb.handler/example {}}
+
+ :duct.profile/dev #duct/include "dev"
+ :duct.profile/local #duct/include "local"
+ :duct.profile/prod {}
+
+ :duct.module/logging {}
+ :duct.module.web/site
+ {}}
