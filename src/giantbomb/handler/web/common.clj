@@ -1,4 +1,17 @@
-(ns giantbomb.handler.web.common)
+(ns giantbomb.handler.web.common
+  (:require [clojure.string :as string]))
+
+(defn req->query
+  [req]
+  (let [name-param (-> req :params :name)]
+    (when-not (string/blank? name-param)
+      {:name name-param})))
+
+(defn compose-url
+  [path query]
+  (if-not (-> query :name string/blank?)
+    (format "%s?name=%s" path (:name query))
+    path))
 
 (defn- headers
   []

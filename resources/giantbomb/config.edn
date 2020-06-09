@@ -6,11 +6,19 @@
    :logger #ig/ref :duct/logger
    :token #duct/env ["GIANTBOMB_HOST" Str]}
 
+  :giantbomb.boundaries.in-memory-cart/cart
+  {}
+
   :giantbomb.services/game-service
   {:repository #ig/ref :giantbomb.boundaries.giantbomb/connector}
 
+  :giantbomb.services/cart-service
+  {:repository #ig/ref :giantbomb.boundaries.in-memory-cart/cart
+   :game-service #ig/ref :giantbomb.services/game-service}
+
   :giantbomb.handler/web
-  {:game-service #ig/ref :giantbomb.services/game-service}
+  {:cart-service #ig/ref :giantbomb.services/cart-service
+   :game-service #ig/ref :giantbomb.services/game-service}
 
   :duct.router/cascading
   [#ig/ref [:giantbomb.handler/web]]}
