@@ -12,6 +12,10 @@
                  [org.clojure.clr/spec.alpha "0.1.176"]]
   :plugins [[duct/lein-duct "0.12.1"]]
   :main ^:skip-aot giantbomb.main
+  :cloverage
+  {:ns-exclude-regex [#"dev"
+                      #"giantbomb.main"
+                      #"user"]}
   :resource-paths ["resources" "target/resources"]
   :prep-tasks ["javac" "compile" ["run" ":duct/compiler"]]
   :middleware [lein-duct.plugin/middleware]
