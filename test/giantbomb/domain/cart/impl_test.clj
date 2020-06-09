@@ -50,3 +50,27 @@
           (->CartServiceImpl game-service nil)]
       (t/is (= game-service/unexpected-error-result
                (service/add service (:id game-fix/game)))))))
+
+(t/deftest delete-test
+  (let [expected-guid (:guid game-fix/game)
+        cart fix/cart
+        repository
+        (reify CartRepository
+          (delete [_ guid]
+            (t/is (= expected-guid guid))
+            cart))
+        service
+        (->CartServiceImpl nil repository)]
+    (t/is (= cart
+             (service/delete service expected-guid)))))
+
+(t/deftest checkout-test
+  (let [cart {:games []}
+        repository
+        (reify CartRepository
+          (checkout [_]
+            cart))
+        service
+        (->CartServiceImpl nil repository)]
+    (t/is (= cart
+             (service/checkout service)))))

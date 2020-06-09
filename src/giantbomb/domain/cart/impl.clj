@@ -22,4 +22,10 @@
   CartService
   (add [_ id]
     (m/extract (m/>>= (get-game game-service id)
-                      (comp either/right (partial repository/add repository))))))
+                      (comp either/right (partial repository/add repository)))))
+
+  (checkout [_]
+    (repository/checkout repository))
+
+  (delete [_ guid]
+    (repository/delete repository guid)))
