@@ -6,4 +6,6 @@
 (defrecord GameServiceImpl [repository]
   GameService
   (find-all [_ query]
-    (repository/find-all repository query)))
+    (repository/find-all repository query))
+  (get-game [_ guid]
+    (repository/get-game repository guid)))

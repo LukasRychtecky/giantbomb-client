@@ -18,30 +18,50 @@
   #(json/read-value % (json/object-mapper {:decode-key-fn true})))
 
 (defn- query-params
-  [query token]
-  {:api_key token
-   :format "json"
-   :query query})
+  ([token]
+   {:api_key token
+    :format "json"})
+  ([query token]
+   (merge (query-params token)
+          {:query query})))
 
 (defn- ->game
   [obj]
-  {:id (:id obj)
-   :name (:name obj)
-   :thumb-url (-> obj :image :thumb_url)})
+  (merge (select-keys obj [:guid :id :name])
+         {:thumb-url (-> obj :image :thumb_url)}))
 
 (defrecord Giantbomb [host logger token]
   GameRepository
   (find-all [_ query]
     (let [url (format "%s/api/search" host)
-          {:keys [body status] :as response}
+          {:keys [body] :as response}
           @(http/get url {:headers default-headers
                           :as :text
                           :query-params
                           (query-params (:name query) token)})]
       (try
-        (case status
-          200 (->> body decode :results (map ->game))
-          service/unexpected-error-result)
+        (let [decoded-body (decode body)]
+          (case (:status_code decoded-body)
+            1 (->> decoded-body :results (map ->game))
+            service/unexpected-error-result))
+        (catch JsonParseException e
+          (logger/log logger :error {:exception e
+                                     :response response})
+          service/unexpected-error-result))))
+
+  (get-game [_ guid]
+    (let [url (format "%s/api/game/%s" host guid)
+          {:keys [body] :as response}
+          @(http/get url {:headers default-headers
+                          :as :text
+                          :query-params
+                          (query-params token)})]
+      (try
+        (let [decoded-body (decode body)]
+          (case (:status_code decoded-body)
+            1 (-> decoded-body :results ->game)
+            101 service/not-found-result
+            service/unexpected-error-result))
         (catch JsonParseException e
           (logger/log logger :error {:exception e
                                      :response response})
