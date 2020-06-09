@@ -1,10 +1,19 @@
 {:duct.profile/base
  {:duct.core/project-ns giantbomb
 
-  :duct.router/cascading
-  [#ig/ref [:giantbomb.handler/example]]
+  :giantbomb.boundaries.giantbomb/connector
+  {:host "https://www.giantbomb.com"
+   :logger #ig/ref :duct/logger
+   :token #duct/env ["GIANTBOMB_HOST" Str]}
 
-  :giantbomb.handler/example {}}
+  :giantbomb.services/game-service
+  {:repository #ig/ref :giantbomb.boundaries.giantbomb/connector}
+
+  :giantbomb.handler/web
+  {:game-service #ig/ref :giantbomb.services/game-service}
+
+  :duct.router/cascading
+  [#ig/ref [:giantbomb.handler/web]]}
 
  :duct.profile/dev #duct/include "dev"
  :duct.profile/local #duct/include "local"
