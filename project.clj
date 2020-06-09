@@ -31,4 +31,6 @@
                                 [kerodon "0.9.1"]]
                  :plugins [[jonase/eastwood "0.2.5"]
                            [lein-cloverage "1.0.11"]
-                           [lein-kibit "0.1.6"]]}})
+                           [lein-kibit "0.1.6"]]}}
+  :aliases {"clj-kondo" ["run" "-m" "clj-kondo.main"
+                         "--lint" "src" "test"]})
