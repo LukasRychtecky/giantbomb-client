@@ -2,7 +2,8 @@
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :min-lein-version "2.0.0"
-  :dependencies [[duct/core "0.8.0"]
+  :dependencies [[cats "0.4.0"]
+                 [duct/core "0.8.0"]
                  [duct/module.logging "0.5.0"]
                  [duct/module.web "0.7.0"]
                  [hiccup "1.0.5"]
