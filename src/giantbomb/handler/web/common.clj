@@ -1,5 +1,12 @@
 (ns giantbomb.handler.web.common
-  (:require [clojure.string :as string]))
+  (:require [clojure.string :as string]
+            [ring.middleware.anti-forgery :as anti-forgery]))
+
+(defn csrf-field
+  []
+  [:input {:name "__anti-forgery-token"
+           :type "hidden"
+           :value anti-forgery/*anti-forgery-token*}])
 
 (defn req->query
   [req]
@@ -31,5 +38,9 @@
       [:div.container.d-flex.justify-content-between
        [:a {:class "navbar-brand d-flex align-items-center"
             :href "/"}
-        "GiantBomb"]]]]
+        "GiantBomb"]
+       [:nav
+        [:a {:class "py-2 d-none d-md-inline-block"
+             :href "/checkout"}
+         "Checkout"]]]]]
     body]])

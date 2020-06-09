@@ -27,4 +27,13 @@
                    (cart/add-game cart-service req))
    (compojure/POST "/cart-delete-game"
                    [:as req]
-                   (cart/delete-game cart-service req))))
+                   (cart/delete-game cart-service req))
+   (compojure/GET "/checkout"
+                  []
+                  (-> cart-service
+                      cart/checkout-page
+                      hiccup/html
+                      html-response))
+   (compojure/POST "/checkout"
+                  []
+                  (cart/checkout cart-service))))

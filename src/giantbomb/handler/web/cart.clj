@@ -16,3 +16,28 @@
   (-> "/"
       (common/compose-url (common/req->query req))
       ring/redirect))
+
+(defn checkout-page
+  [service]
+  (let [cart (service/get-cart service)]
+    (common/layout
+     [:main {:role "main"}
+      [:section.jumbotron.text-center
+       [:div.container
+        [:h1 "Checkout"]
+        [:ul.list-group
+         (for [game (:games cart)]
+           [:li.list-group-item (:name game)])]
+        (if (-> cart :games seq)
+          [:form {:action "/checkout", :method "post"}
+           (common/csrf-field)
+           [:button {:class "btn btn-lg btn-block btn-primary"}
+            "Rent them all"]]
+          [:a {:class "btn btn-primary"
+               :href "/"}
+           "Select games and rent them"])]]])))
+
+(defn checkout
+  [service]
+  (service/checkout service)
+  (ring/redirect "/"))

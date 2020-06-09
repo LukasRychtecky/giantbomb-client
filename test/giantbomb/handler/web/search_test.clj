@@ -1,14 +1,16 @@
 (ns giantbomb.handler.web.search-test
   (:require [clojure.test :as t]
+            [giantbomb.domain.cart.service :refer
+             [CartService]]
             [giantbomb.domain.game.fixtures :as fix]
-            [giantbomb.domain.game.service :refer
-             [GameService]]
+            [giantbomb.domain.game.service
+             :refer [GameService]
+             :as service]
             [giantbomb.handler.web]
             [integrant.core :as ig]
-            [ring.mock.request :as mock]
             [kerodon.impl :as kerodon]
             [net.cgrand.enlive-html :as enlive]
-            [giantbomb.domain.game.service :as service]))
+            [ring.mock.request :as mock]))
 
 (defn- parse-body
   [body]
@@ -34,16 +36,26 @@
 
 (t/deftest search-test
   (t/testing "should render a result without query"
-    (let [{:keys [status]} (search-api {})]
+    (let [conf
+          {:cart-service
+           (reify CartService
+             (get-cart [_]
+               {:games []}))}
+          {:keys [status]} (search-api conf)]
       (t/is (= 200 status))))
 
   (t/testing "should render a result of a query"
     (let [expected-query {:name "silent"}
-          conf {:game-service
-                (reify GameService
-                  (find-all [_ query]
-                    (t/is (= expected-query query))
-                    [fix/game]))}
+          conf
+          {:cart-service
+           (reify CartService
+             (get-cart [_]
+               {:games []}))
+           :game-service
+           (reify GameService
+             (find-all [_ query]
+               (t/is (= expected-query query))
+               [fix/game]))}
           {:keys [body status]}
           (search-api conf {:params {:name "silent"}})]
       (t/is (= 200 status))
@@ -51,10 +63,15 @@
                (text body [:#game-356 :.card-title])))))
 
   (t/testing "should render a no result alert"
-    (let [conf {:game-service
-                (reify GameService
-                  (find-all [_ _]
-                    []))}
+    (let [conf
+          {:cart-service
+           (reify CartService
+             (get-cart [_]
+               {:games []}))
+           :game-service
+           (reify GameService
+             (find-all [_ _]
+               []))}
           {:keys [body status]}
           (search-api conf {:params {:name "silent"}})]
       (t/is (= 200 status))
@@ -62,10 +79,15 @@
                (text body [:.alert-info])))))
 
   (t/testing "should render a GiantBomb API not working"
-    (let [conf {:game-service
-                (reify GameService
-                  (find-all [_ _]
-                    service/unexpected-error-result))}
+    (let [conf
+          {:cart-service
+           (reify CartService
+             (get-cart [_]
+               {:games []}))
+           :game-service
+           (reify GameService
+             (find-all [_ _]
+               service/unexpected-error-result))}
           {:keys [body status]}
           (search-api conf {:params {:name "silent"}})]
       (t/is (= 200 status))

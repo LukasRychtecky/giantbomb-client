@@ -7,9 +7,9 @@
              [CartRepository]]
             [giantbomb.domain.cart.service :as service]
             [giantbomb.domain.game.fixtures :as game-fix]
-            [giantbomb.domain.game.service :refer
-             [GameService]]
-            [giantbomb.domain.game.service :as game-service]))
+            [giantbomb.domain.game.service
+             :refer [GameService]
+             :as game-service]))
 
 (t/deftest add-test
   (t/testing "should add a game"
@@ -30,8 +30,7 @@
                (service/add service (:id game-fix/game))))))
 
   (t/testing "should not add a game, not found"
-    (let [cart fix/cart
-          game-service
+    (let [game-service
           (reify GameService
             (get-game [_ _]
               game-service/not-found-result))
@@ -41,8 +40,7 @@
                (service/add service (:id game-fix/game))))))
 
   (t/testing "should not add a game, error when getting a game"
-    (let [cart fix/cart
-          game-service
+    (let [game-service
           (reify GameService
             (get-game [_ _]
               game-service/unexpected-error-result))

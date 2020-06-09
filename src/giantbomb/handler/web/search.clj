@@ -1,15 +1,7 @@
 (ns giantbomb.handler.web.search
-  (:require [clojure.string :as string]
-            [giantbomb.domain.cart.service :as cart-service]
+  (:require [giantbomb.domain.cart.service :as cart-service]
             [giantbomb.domain.game.service :as game-service]
-            [giantbomb.handler.web.common :as common]
-            [ring.middleware.anti-forgery :as anti-forgery]))
-
-(defn- csrf-field
-  []
-  [:input {:name "__anti-forgery-token"
-           :type "hidden"
-           :value anti-forgery/*anti-forgery-token*}])
+            [giantbomb.handler.web.common :as common]))
 
 (defn- search-form
   [query]
@@ -32,12 +24,12 @@
   [query in-cart? game]
   (if (in-cart? (:guid game))
     [:form {:action (compose-delete-url query), :method "post"}
-     (csrf-field)
+     (common/csrf-field)
      [:input {:name "guid", :type "hidden", :value (:guid game)}]
      [:button {:class "btn btn-lg btn-block btn-outline-primary"}
       "Remove from cart"]]
     [:form {:action (compose-add-url query), :method "post"}
-     (csrf-field)
+     (common/csrf-field)
      [:input {:name "guid", :type "hidden", :value (:guid game)}]
      [:button {:class "btn btn-lg btn-block btn-primary"}
       "Add to cart"]]))
