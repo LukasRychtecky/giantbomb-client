@@ -23,7 +23,10 @@
                (repository/delete cart (:guid game)))))
     (t/testing "should clear a cart"
       (t/is (= {:games []}
-               (repository/checkout cart))))))
+               (repository/checkout cart))))
+    (t/testing "should return a cart"
+      (t/is (= {:games []}
+               (repository/get-cart cart))))))
 
 (t/deftest init-key-cart-test
   (let [*cart ::custom-atom]

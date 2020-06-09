@@ -74,3 +74,14 @@
         (->CartServiceImpl nil repository)]
     (t/is (= cart
              (service/checkout service)))))
+
+(t/deftest get-cart-test
+  (let [cart {:games []}
+        repository
+        (reify CartRepository
+          (get-cart [_]
+            cart))
+        service
+        (->CartServiceImpl nil repository)]
+    (t/is (= cart
+             (service/get-cart service)))))

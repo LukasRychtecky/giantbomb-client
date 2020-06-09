@@ -28,4 +28,7 @@
     (repository/checkout repository))
 
   (delete [_ guid]
-    (repository/delete repository guid)))
+    (repository/delete repository guid))
+
+  (get-cart [_]
+    (repository/get-cart repository)))

@@ -3,4 +3,5 @@
 (defprotocol CartRepository
   (add [_ game])
   (checkout [_])
-  (delete [_ guid]))
+  (delete [_ guid])
+  (get-cart [_]))

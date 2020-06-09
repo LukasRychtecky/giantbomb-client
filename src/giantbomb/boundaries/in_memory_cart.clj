@@ -20,7 +20,9 @@
   (checkout [_]
     (reset! *cart {:games []}))
   (delete [_ guid]
-    (swap! *cart delete-game guid)))
+    (swap! *cart delete-game guid))
+  (get-cart [_]
+    @*cart))
 
 (defmethod ig/init-key ::cart
   [_ opts]
